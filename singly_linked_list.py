@@ -42,13 +42,12 @@ class LinkedList:
         if not self.head or not self.head.next:
             return
 
-        sorted_list_head = None  # Голова майбутнього відсортованого списку
+        sorted_list_head = None
         current = self.head
 
         while current:
-            next_node = current.next  # Запам'ятовуємо наступний вузол
+            next_node = current.next
             
-            # Вставка поточного вузла у новий відсортований підсписок
             if sorted_list_head is None or sorted_list_head.data >= current.data:
                 current.next = sorted_list_head
                 sorted_list_head = current
@@ -59,21 +58,77 @@ class LinkedList:
                 current.next = search.next
                 search.next = current
                 
-            current = next_node  # Переходимо далі
+            current = next_node
 
-        self.head = sorted_list_head  # Оновлюємо голову списку
+        self.head = sorted_list_head
 
 
-# Перевірка роботи другої частини
+def merge_sorted_lists(list1, list2):
+    """Об'єднує два відсортовані однозв'язні списки в один новий відсортований список."""
+    dummy = Node()  # Тимчасовий вузол-заглушка для полегшення ітерації
+    tail = dummy
+
+    current1 = list1.head
+    current2 = list2.head
+
+    while current1 and current2:
+        if current1.data <= current2.data:
+            tail.next = current1
+            current1 = current1.next
+        else:
+            tail.next = current2
+            current2 = current2.next
+        tail = tail.next
+
+    # Приєднуємо залишок, якщо один зі списків закінчився раніше
+    if current1:
+        tail.next = current1
+    elif current2:
+        tail.next = current2
+
+    merged_list = LinkedList()
+    merged_list.head = dummy.next
+    return merged_list
+
+
+# Перевірка роботи всіх трьох компонентів
 if __name__ == "__main__":
-    print("--- Перевірка сортування вставками ---")
+    # 1. Перевірка реверсування
+    print("--- 1. Реверсування списку ---")
+    llist = LinkedList()
+    for val in [10, 20, 30, 40]:
+        llist.insert_at_end(val)
+    print("Оригінальний:")
+    llist.print_list()
+    llist.reverse()
+    print("Реверсований:")
+    llist.print_list()
+
+    # 2. Перевірка сортування
+    print("\n--- 2. Сортування вставками ---")
     unsorted_list = LinkedList()
     for val in [15, 3, 24, 8, 42, 1]:
         unsorted_list.insert_at_end(val)
-        
-    print("Невідсортований список:")
+    print("Невідсортований:")
+    unsorted_list.print_list()
+    unsorted_list.insertion_sort()
+    print("Відсортований:")
     unsorted_list.print_list()
 
-    unsorted_list.insertion_sort()
-    print("Відсортований список:")
-    unsorted_list.print_list()
+    # 3. Перевірка об'єднання двох відсортованих списків
+    print("\n--- 3. Об'єднання двох відсортованих списків ---")
+    l1 = LinkedList()
+    l2 = LinkedList()
+    for val in [2, 5, 9, 14]:
+        l1.insert_at_end(val)
+    for val in [1, 6, 8, 10, 12]:
+        l2.insert_at_end(val)
+        
+    print("Список 1:")
+    l1.print_list()
+    print("Список 2:")
+    l2.print_list()
+
+    merged = merge_sorted_lists(l1, l2)
+    print("Результат об'єднання:")
+    merged.print_list()
