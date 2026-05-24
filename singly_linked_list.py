@@ -31,22 +31,49 @@ class LinkedList:
         prev = None
         current = self.head
         while current:
-            next_node = current.next  # Запам'ятовуємо наступний вузол
-            current.next = prev       # Розворачуємо вказівник назад
-            prev = current            # Рухаємось вперед
+            next_node = current.next
+            current.next = prev
+            prev = current
             current = next_node
-        self.head = prev              # Оновлюємо голову списку
+        self.head = prev
+
+    def insertion_sort(self):
+        """Сортування однозв'язного списку вставками (in-place)."""
+        if not self.head or not self.head.next:
+            return
+
+        sorted_list_head = None  # Голова майбутнього відсортованого списку
+        current = self.head
+
+        while current:
+            next_node = current.next  # Запам'ятовуємо наступний вузол
+            
+            # Вставка поточного вузла у новий відсортований підсписок
+            if sorted_list_head is None or sorted_list_head.data >= current.data:
+                current.next = sorted_list_head
+                sorted_list_head = current
+            else:
+                search = sorted_list_head
+                while search.next and search.next.data < current.data:
+                    search = search.next
+                current.next = search.next
+                search.next = current
+                
+            current = next_node  # Переходимо далі
+
+        self.head = sorted_list_head  # Оновлюємо голову списку
 
 
-# Перевірка роботи першої частини
+# Перевірка роботи другої частини
 if __name__ == "__main__":
-    llist = LinkedList()
-    for val in [10, 20, 30, 40]:
-        llist.insert_at_end(val)
+    print("--- Перевірка сортування вставками ---")
+    unsorted_list = LinkedList()
+    for val in [15, 3, 24, 8, 42, 1]:
+        unsorted_list.insert_at_end(val)
         
-    print("Оригінальний список:")
-    llist.print_list()
+    print("Невідсортований список:")
+    unsorted_list.print_list()
 
-    llist.reverse()
-    print("Після реверсування:")
-    llist.print_list()
+    unsorted_list.insertion_sort()
+    print("Відсортований список:")
+    unsorted_list.print_list()
