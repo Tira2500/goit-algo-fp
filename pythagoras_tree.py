@@ -2,52 +2,77 @@ import turtle
 
 
 def draw_pythagoras_tree(branch_len, level):
-    # Базовий випадок (умова виходу з рекурсії)
+    # Базовий випадок — зупиняємо рекурсію
     if level == 0:
         return
 
-    # Малюємо основну гілку (стовбур поточного піддерева)
+    # ОБЧИСЛЕННЯ ЕФЕКТУ ОБ'ЄМУ:
+    # Використовуємо степеневу залежність (level ** 1.8) для контрасту між основою та верхівкою
+    thickness = (level ** 1.8) * 0.5
+    
+    # Встановлюємо стан для руху вперед
+    turtle.pensize(thickness)
+    if level > 2:
+        turtle.color("#8B4513")  # Коричневий стовбур
+    else:
+        turtle.color("#228B22")  # Зелене листя
+
+    # Малюємо гілку вперед
     turtle.forward(branch_len)
 
-    # Обчислюємо параметри для наступного рівня
-    next_len = branch_len * 0.75  # Кожна наступна гілка коротша на 25%
-    angle = 30  # Кут розгалуження гілок
+    # Обчислюємо параметри для наступних розгалужень
+    next_len = branch_len * 0.75
+    angle = 30
 
-    # Рекурсивний виклик для правого піддерева
+    # Рекурсивний обхід правого піддерева
     turtle.right(angle)
     draw_pythagoras_tree(next_len, level - 1)
 
-    # Рекурсивний виклик для лівого піддерева
+    # Рекурсивний обхід лівого піддерева
     turtle.left(angle * 2)
     draw_pythagoras_tree(next_len, level - 1)
 
-    # Повертаємо черепашку в початкову позицію та напрямок
+    # Повертаємо початковий напрямок черепашки для поточного вузла
     turtle.right(angle)
+    
+    # Відновлюємо стан поточного рівня перед кроком назад
+    turtle.pensize(thickness)
+    if level > 2:
+        turtle.color("#8B4513")
+    else:
+        turtle.color("#228B22")
+        
+    # Повертаємося назад
     turtle.backward(branch_len)
 
 
 def main():
-    # Запит рівня рекурсії у користувача
     try:
-        user_level = int(input("Введіть рівень рекурсії (оптимально від 1 до 10): "))
+        user_level = int(input("Введіть рівень рекурсії (рекомендую 8 або 9): "))
     except ValueError:
-        print("Будь ласка, введіть коректне ціле число.")
+        print("Будь ласка, введіть ціле число.")
         return
 
-    # Налаштування екрана та швидкості малювання
-    turtle.setup(width=800, height=600)
+    turtle.setup(width=900, height=700)
     turtle.speed("fastest")
-    turtle.left(90)  # Повертаємо черепашку вгору, щоб дерево росло знизу вгору
+    
+    # Вимикаємо проміжну анімацію для швидкого рендерингу
+    turtle.tracer(0, 0)
+
+    # Початкова позиція черепашки
+    turtle.left(90)
     turtle.up()
-    turtle.goto(0, -200)  # Зміщуємо точку старту донизу екрана
+    turtle.goto(0, -260)
     turtle.down()
-    turtle.color("green")
 
-    # Перший виклик рекурсивної функції
-    draw_pythagoras_tree(100, user_level)
+    # Запуск
+    draw_pythagoras_tree(130, user_level)
 
-    # Тримаємо вікно відкритим після завершення малювання
-    turtle.mainloop()
+    # Оновлюємо екран після завершення рекурсії
+    turtle.update()
+    
+    print("Дерево побудовано з правильними пропорціями!")
+    turtle.exitonclick()
 
 
 if __name__ == "__main__":
